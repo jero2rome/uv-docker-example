@@ -1,34 +1,33 @@
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
-# Install the project into `/app`
 WORKDIR /app
 
-# Enable bytecode compilation
+# Enable bytecode compilation and set the link mode for mounted volumes
 ENV UV_COMPILE_BYTECODE=1
-
-# Copy from the cache instead of linking since it's a mounted volume
 ENV UV_LINK_MODE=copy
 
-# Install the project's dependencies using the lockfile and settings
+# Install the project's dependencies from the lockfile.
+# This first sync installs production dependencies only (for caching),
+# but does not use --no-dev so that dev dependencies will be installed later.
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --no-dev
+    uv sync --frozen --no-install-project
 
-# Then, add the rest of the project source code and install it
-# Installing separately from its dependencies allows optimal layer caching
+# Add the rest of the project source code and install it.
+# This sync will install the project itself along with any dev dependencies.
 ADD . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+    uv sync --frozen
 
-# Place executables in the environment at the front of the path
+# Place executables in the environment's PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Reset the entrypoint, don't invoke `uv`
+# Reset entrypoint so that uv isn’t automatically invoked
 ENTRYPOINT []
 
-# Run the FastAPI application by default
-# Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs
-# Uses `--host 0.0.0.0` to allow access from outside the container
-CMD ["fastapi", "dev", "--host", "0.0.0.0", "src/uv_docker_example"]
+# Start the application under debugpy:
+#  - debugpy listens on port 5678 and waits for a debugger to attach
+#  - Then, fastapi dev starts with hot-reloading on port 8000.
+CMD ["python", "-Xfrozen_modules=off", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "fastapi", "dev", "--host", "0.0.0.0", "src/uv_docker_example"]

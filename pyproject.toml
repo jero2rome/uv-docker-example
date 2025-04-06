@@ -1,11 +1,12 @@
 [project]
 name = "uv-docker-example"
 version = "0.1.0"
-description = "Add your description here"
+description = "An example of using uv with FastAPI in Docker"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
-    "fastapi[standard]>=0.112.2",
+    "fastapi>=0.115.12",
+    "uvicorn>=0.34.0",
 ]
 
 [build-system]
@@ -17,6 +18,10 @@ hello = "uv_docker_example:hello"
 
 [tool.uv]
 dev-dependencies = [
-    "ruff>=0.6.2",
-    "fastapi-cli>=0.0.5",
+    "ruff>=0.11.4",
+    "fastapi-cli>=0.0.7",
+    "debugpy>=1.8.13",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uv_docker_example"]
