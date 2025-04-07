@@ -42,6 +42,11 @@ And then start the debugger from VSCode.
 Then you can make changes to the code and see them reflected when you refresh the page in your
 browser.
 
+extra:
+```
+docker compose down --remove-orphans
+```
+
 To run the command-line entrypoint in the container:
 
 ```console
