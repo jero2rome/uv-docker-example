@@ -26,12 +26,21 @@ more robust support for various workflows.
 
 To build and run the web application using Docker compose:
 
+For normal mode:
 ```
-docker compose up --watch 
+docker compose up web --watch
+```
+Then you can make changes to the code and see them reflected when you refresh the page in your
+browser.
+
+For debug mode:
+```
+docker compose up debug --watch
 ```
 
-By default, the image is set up to start the web application. However, a command-line interface is
-provided for demonstration purposes as well. 
+And then start the debugger from VSCode.
+Then you can make changes to the code and see them reflected when you refresh the page in your
+browser.
 
 To run the command-line entrypoint in the container:
 

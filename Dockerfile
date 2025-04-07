@@ -27,7 +27,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset entrypoint so that uv isn’t automatically invoked
 ENTRYPOINT []
 
-# Start the application under debugpy:
-#  - debugpy listens on port 5678 and waits for a debugger to attach
-#  - Then, fastapi dev starts with hot-reloading on port 8000.
-CMD ["python", "-Xfrozen_modules=off", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "fastapi", "dev", "--host", "0.0.0.0", "src/uv_docker_example"]
+CMD ["python", "-Xfrozen_modules=off", "-m", "fastapi", "dev", "--host=0.0.0.0", "src/uv_docker_example"]
